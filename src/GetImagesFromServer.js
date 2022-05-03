@@ -1,55 +1,60 @@
-import axios from 'axios';
-import { useState } from 'react';
+import './App.css';
+import React, { useEffect, useState } from 'react';
 
-const regex = /src="https([^"]+)"/gi;
-const { get } = axios;
-let dataFromServer;
+const regex = /"blank":"(https([^"]+\.png))/gi;
+const regexTwo = /"blank":"/gi;
+
+// Use fetch to get url of imgs
 let arrayUrlImages = [];
-const arrayOfTenImg = [];
+const GetImagesFromServer = () => {
+  const [user, setAppState] = useState({
+    loading: false,
+    repos: null,
+  });
 
-get('https://api.memegen.link/templates/').then((response) => {
-  if (response.status === 200) {
-    dataFromServer = response.data;
+  useEffect(() => {
+    setAppState({ loading: true });
+    user = `https://api.memegen.link/templates`;
+    fetch(user)
+      .then((res) => res.json())
+      .then((repos) => {
+        setAppState({ loading: false, repos: repos });
+      });
+  }, [setAppState]);
 
-    // extraxt url-images from server respond
-    arrayUrlImages = dataFromServer.match(regex);
-  }
-});
-console.log(dataFromServer);
+  const stringTest = JSON.stringify(user); // get img-data from server
 
-//     // loop over array, get first 10 imgs, remove src= && "", save url in new array
-//     for (let i = 0; i < 10; i++) {
-//       arrayOfTenImg[i] = arrayUrlImages[i].slice(
-//         5,
-//         arrayUrlImages[i].length - 1,
-//       );
+  arrayUrlImages = stringTest.match(regex) + ',';
+  const arrayUrlImages2 = arrayUrlImages.replace(regexTwo, ''); // cut down string to urls
+  const usingSplit = arrayUrlImages2.split(','); // Split string into array by ,
+  console.log(typeof usingSplit);
 
-//       const url = arrayOfTenImg[i];
+  return (
+    <>
+      <section>
+        {/* //loop over meme array */}
+        {usingSplit.map((d) => (
+          <img
+            key="" // unique ID is missing
+            src={d}
+            alt=""
+            style={{
+              width: '100px',
+              height: '100px',
+              marginRight: '5px',
+            }}
+          />
+        ))}
+      </section>
+      {/* <h1>STRING</h1>
+      <div>ARRAYURL {arrayUrlImages}</div>
+      <div>ARRAYURL {arrayUrlImages2}</div> */}
+    </>
+  );
+};
 
-//       // create a writable stream and save the received data stream to path
-//       https.get(url, (res) => {
-//         let path;
-
-//         i !== 9
-//           ? (path = `./meme/0${i + 1}.jpg`)
-//           : (path = `./meme/${i + 1}.jpg`);
-
-//         const writeStream = fs.createWriteStream(path);
-//         res.pipe(writeStream);
-
-//         writeStream.on('finish', () => {
-//           writeStream.close();
-//           console.log('Download Completed');
-//         });
-//       });
-//     }
-//   })
-//   .catch((err) => console.error(err));
-
-// export function GetMemesFromServer() {
-//   return null;
-// }
-
-export function GetMemesFromServer() {
-  return JSON.stringify(dataFromServer);
+function App() {
+  return <GetImagesFromServer />;
 }
+
+export default App;
