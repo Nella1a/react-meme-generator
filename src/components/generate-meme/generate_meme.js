@@ -57,8 +57,6 @@ const onChangePreviewHandler = () => {
 
    useEffect(() => {
     console.log("UE: generate Meme");
-   // console.log("preview", preview)
-
       console.log("URL:", url)
       if(preview){
         fetch(url)
@@ -66,8 +64,6 @@ const onChangePreviewHandler = () => {
         .then((data) =>{
           console.log("data:", data)
           setCustomMemeRespUrl(data)
-         // setTextTop("")
-         // setTextBottom("")
         })
         .catch((error) => console.log(error));
 
