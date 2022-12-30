@@ -31,10 +31,11 @@ const App = () => {
   // const [memeTemplateSelector, setMemeTemplateSelector] = useState('');
   // const [enter, setEnter] = useState(false);
 
-  const [memeTemplates, setMemeTemplates] = useState([]);
+  const [memeGallery, setMemeGallery] = useState([]);
   const [boxSearch, setBoxSearch] = useState("");
   const [userMemeChoice, setUserMemeChoice] = useState("");
   const [preview, setPreview] = useState(false);
+  const [searchMemeGallery, setSearchMemeGallery] = useState(memeGallery)
 
   console.log("render")
 
@@ -43,14 +44,24 @@ const App = () => {
     console.log("uE - initial fetch gallery")
     fetch('https://api.memegen.link/templates')
     .then((response) => response.json())
-    .then((data) => setMemeTemplates(data))
+    .then((data) => setMemeGallery(data))
     .catch((error) => console.log(error));
   }, []);
 
+  console.log({memeGallery})
+  console.log({searchMemeGallery})
+
+useEffect(() => {
+  const filterMemes = memeGallery.filter((meme) =>
+    meme.name.toLocaleLowerCase().includes(boxSearch))
+ setSearchMemeGallery(filterMemes)
+
+},[memeGallery, boxSearch])
 
  const onChangeHandler = (event) => {
     setBoxSearch(event.target.value.toLocaleLowerCase())
  }
+
 
 const onClickMemeChoice = (event) => {
   console.log("chooseMeme",event)
@@ -58,18 +69,13 @@ const onClickMemeChoice = (event) => {
   setPreview(false);
 }
 
-const filterMemes = memeTemplates.filter((meme) =>
-    meme.name.toLocaleLowerCase().includes(boxSearch)
-    )
 
   return (
     <div>
        <SearchBox onChangeHandler={onChangeHandler} />
        <section css={container}>
           <article css={sectionStyle}>
-            {filterMemes.map((template) =>
-            <DisplayMemeGallery template={template} key={template.id} onClickMemeChoice={onClickMemeChoice}/>
-            )}
+            <DisplayMemeGallery filteredGallery={searchMemeGallery} onClickMemeChoice={onClickMemeChoice}/>
           </article>
         {userMemeChoice && <GenerateMeme userMemeChoice ={userMemeChoice} setUserMemeChoice={setUserMemeChoice} preview={preview} setPreview={setPreview}/> }
       </section>
