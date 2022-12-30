@@ -14,28 +14,27 @@ const memeSize = css`
 
 
 
-const DisplayMemeGallery = ({template, onClickMemeChoice}) => {
+const DisplayMemeGallery = ({filteredGallery, onClickMemeChoice}) => {
   console.log("render meme gallery")
-/*   console.log("template blank: ", template.blank)
-  console.log("template url: ", template.url)
-  console.log("template preview: ", preview) */
+  console.log({filteredGallery})
 
-  return(
+return(filteredGallery.map(meme =>
   <button
-  key={template.id}
+  key={meme.id}
   css={memeSize}
- onClick={() => onClickMemeChoice(template)}
+ onClick={() => onClickMemeChoice(meme)}
  onKeyPress={()=>{}}
  tabIndex={0}
   >
   <DisplayMeme
     height="auto"
     width="100%"
-    memeName={template.name}
-    memeUrl={template.blank}
+    memeName={meme.name}
+    memeUrl={meme.blank}
   />
   </button>
-)
+))
+
 }
 
 export default DisplayMemeGallery;
